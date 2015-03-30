@@ -27,6 +27,12 @@ module Spree
         respond_with(@new) { |format| format.html { redirect_to edit_admin_banner_box_url(@new) } }
       end
       
+      def create
+        invoke_callbacks(:create, :before)
+        @object.attributes = banner_params
+        super
+      end
+      
       protected
       def find_resource
         Spree::BannerBox.find(params[:id])
@@ -44,6 +50,13 @@ module Spree
         @search = super.ransack(params[:q])
         @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_products_per_page])
       end
+      
+      private 
+      
+      def banner_params
+        params.require(:banner_box).permit(:presentation, :category, :position, :enabled, :attachment)
+      end
+      
     end
   end
 end
