@@ -9,6 +9,7 @@ Spree::Core::Engine.routes.draw do
         get :clone
       end
     end
-    resource :banner_box_settings
+
+    resource :banner_box_settings, only: [:show, :edit, :update]
   end
 end

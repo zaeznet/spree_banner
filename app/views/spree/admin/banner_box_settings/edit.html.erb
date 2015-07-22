@@ -1,72 +1,103 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render :partial => 'spree/admin/shared/sub_menu/banner' %>
 
 <% content_for :page_title do %>
-  <%= t(:banner_box_settings) %>
+    <%= Spree.t(:banner_box_settings) %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/banner_box_sub_menu' %>
+<script type='text/template' id='banner_style_template'>
+  <div class="col-md-3 col-sm-6">
+    <label for="banner_styles_{{new_style.text}}">{{new_style.text}}</label>
+    <a class="destroy_banner_style with-tip" title="" alt="Destroy" data-value="{{new_style.text}}" href="#" data-original-title="Destroy">
+      <i class="icon icon-trash"></i>
+    </a>
+    <input type="text" name="banner_styles[{{new_style.text}}]" id="banner_styles_{{new_style.text}}" value="{{new_style.value}}" class="form-control">
+  </div>
+</script>
+
+<script type="text/template" id="new_banner_style_template">
+  {{#each new_style}}
+  <div class="col-md-3 col-sm-6" id="banner_style_form">
+    <div class="col-sm-6 p-l-n">
+      <label for="new_banner_styles_name"><%= Spree.t(:new_banner_style_name) %></label>
+      <input type="text" name="new_banner_styles_name" id="new_banner_styles_name" value="" class="form-control">
+    </div>
+    <div class="col-sm-6 p-r-n p-l-n">
+      <label for="new_banner_styles_value"><%= Spree.t(:new_banner_style_value) %></label>
+      <a href="#" title="<%= t(:confirm) %>" alt="<%= t(:confirm) %>" class="new_banner_style_form with-tip">
+        <i class='icon icon-ok'></i>
+      </a>
+      <input type="text" name="new_banner_styles_value" id="new_banner_styles_value" value="" class="form-control">
+    </div>
+  </div>
+  {{/each}}
+</script>
 
 <%= form_tag admin_banner_box_settings_path, :method => :put do %>
-  
-  <fieldset class="no-border-top">
-    <fieldset class="no-border-bottom">
-      <legend align="center"><%= t(:general_settings)%></legend>
-      
-      <div class="field">
-        <div class="warning note"><%= t(:banner_box_settings_warning) %></div>
-      </div>    
-
-      <div data-hook="attachment_path" class="field">
-        <%= label_tag 'preferences[attachment_path]', t(:banner_path) %>
-        <%= preference_field_tag 'preferences[banner_path]', SpreeBanner::Config[:banner_path], :type => :string %>
+  <div id="banner_box_preferences" data-hook="banner_box_preferences">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h1 class="panel-title">
+          <%= Spree.t(:general_settings) %>
+        </h1>
       </div>
-
-      <div class="alpha eight columns">
-        <div data-hook="attachment_default_url" class="field">
-          <%= label_tag 'preferences[attachment_default_url]', t(:banner_default_url) %>
-          <%= preference_field_tag 'preferences[banner_default_url]', SpreeBanner::Config[:banner_default_url], :type => :string %>
-        </div>
-      </div>
-
-      <div class="alpha eight columns">
-        <div data-hook="attachment_url" class="field">
-          <%= label_tag 'preferences[attachment_url]', t(:banner_url) %>
-          <%= preference_field_tag 'preferences[banner_url]', SpreeBanner::Config[:banner_url], :type => :string %>
-        </div>
-      </div>
-
-      <div class="omega four columns">
-        <div data-hook="attachment_default_style" class="field">
-          <%= label_tag 'preferences[attachment_default_style]', t(:banner_default_style) %>
-          <%= collection_select 'preferences', 'banner_default_style', @styles, :first, :first, {:selected => SpreeBanner::Config[:banner_default_style] }, :class => 'select2 fullwidth' %> 
-        </div>
-      </div>
-
-    </fieldset>
-
-    <fieldset class="no-border-bottom" id="attachment_styles" data-hook="banner_styles">
-      <legend align="center"><%= t(:banner_styles) %></legend>
-
-      <div id="banner_styles_list" class="row frameless">      
-        <% @styles.each_with_index do |(style_name, style_value), index| %>        
-          <div class="field three columns">
-            <%= label_tag "banner_styles[#{style_name}]", style_name %>
-            <a href='#' alt="<%= t(:destroy)%>" title="<%= t(:destroy)%>" class='destroy_banner_style with-tip'><i class='icon-trash'></i></a>
-            <%= text_field_tag "banner_styles[#{style_name}]", style_value, :class => 'fullwidth' %>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="alert alert-info no-objects-found">
+              <%= Spree.t(:banner_box_settings_warning) %>
+            </div>
           </div>
-        <% end %>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <%= label_tag 'preferences[banner_path]', Spree.t(:banner_path) %>
+            <%= preference_field_tag 'preferences[banner_path]', SpreeBanner::Config[:banner_path], :type => :string %>
+          </div>
+          <div class="col-sm-6">
+            <%= label_tag 'preferences[banner_default_url]', Spree.t(:banner_default_url) %>
+            <%= preference_field_tag 'preferences[banner_default_url]', SpreeBanner::Config[:banner_default_url], :type => :string %>
+          </div>
+          <div class="col-sm-6">
+            <%= label_tag 'preferences[banner_url]', Spree.t(:banner_url) %>
+            <%= preference_field_tag 'preferences[banner_url]', SpreeBanner::Config[:banner_url], :type => :string %>
+          </div>
+          <div class="col-sm-6">
+            <%= label_tag 'preferences[banner_default_style]', Spree.t(:banner_default_style) %>
+            <%= collection_select 'preferences', 'banner_default_style', @styles, :first, :first, {:selected => SpreeBanner::Config[:banner_default_style] }, :class => 'select2 fullwidth' %>
+          </div>
+        </div>
       </div>
-
-      <div id="new-banner-styles" class="row frameless"></div>
-
-      <div class="field">
-        <%= link_to_with_icon 'icon-plus', t(:add_new_banner_style), '#', :class => 'add_new_banner_style button' %>
-      </div>
-    </fieldset>    
-
-    <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button t(:update), 'icon-refresh' %>
     </div>
-  </fieldset>
+  </div>
+  <div id="banner_box_preferences" data-hook="banner_box_preferences">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h1 class="panel-title">
+          <%= Spree.t(:banner_styles) %>
+        </h1>
+      </div>
+      <div class="panel-body">
+        <div class="row" id="banner_styles">
+          <% @styles.each do |key, value| %>
+            <div class="col-md-3 col-sm-6" id="banner_style_<%= key %>">
+              <%= label_tag "banner_styles[#{key}]", key %>
+              <%= link_to '#', class: 'destroy_banner_style with-tip', title: t(:destroy), alt: t(:destroy), data: {value: key} do %>
+                <i class='icon icon-trash'></i>
+              <% end if key != :mini %>
+              <%= text_field_tag "banner_styles[#{key}]", value, class: 'form-control' %>
+            </div>
+          <% end %>
+        </div>
+        <div class="pull-right buttons">
+          <%= link_to_with_icon 'plus', Spree.t(:add_new_banner_style), '#', :class => 'add_new_banner_style btn btn-primary' %>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { collection_url: admin_banner_box_settings_path } %>
 <% end %>
+
+<script type="text/javascript">
+  new window.BannerBoxSetting()
+</script>

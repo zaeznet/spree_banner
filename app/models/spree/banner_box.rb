@@ -1,38 +1,32 @@
 module Spree
   class BannerBox < ActiveRecord::Base
-    acts_as_list :scope => :category
-    
+
     has_attached_file :attachment,
-                :url  => "/spree/banners/:id/:style_:basename.:extension",
-                :path => ":rails_root/public/spree/banners/:id/:style_:basename.:extension",
-                :styles => { :mini => "80x80#", :small => "120x120#" },
-                :convert_options => { :all => '-strip -auto-orient' }
+                      styles: SpreeBanner::Config[:banner_styles].symbolize_keys!,
+                      default_style: SpreeBanner::Config[:banner_default_style].to_sym,
+                      url: SpreeBanner::Config[:banner_url],
+                      path: SpreeBanner::Config[:banner_path],
+                      convert_options: { all: '-strip -auto-orient -colorspace sRGB' }
+    validates_attachment :attachment,
+                         :presence => true,
+                         :content_type => { :content_type => %w(image/jpeg image/jpg image/png image/gif) }
+
     # save the w,h of the original image (from which others can be calculated)
     # we need to look at the write-queue for images which have not been saved yet
     after_post_process :find_dimensions
 
     validates_presence_of :category
-    validates_attachment_presence :attachment
-    validates_attachment_content_type :attachment, :content_type => ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'image/x-png', 'image/pjpeg'], :message => I18n.t(:images_only)
 
     scope :enabled, lambda { |*categories|
-      if categories.empty?
-        where(:enabled => true)
-      else
-        where(:enabled => true).where(:category => categories)
-      end
-    }
+                    if categories.empty?
+                      where(:enabled => true).where('begin_display IS NULL OR begin_display <= :d) AND (end_display IS NULL OR end_display >= :d', d: Date.today)
+                    else
+                      where(:enabled => true)
+                          .where('begin_display IS NULL OR begin_display <= :d) AND (end_display IS NULL OR end_display >= :d', d: Date.today)
+                          .where(:category => categories)
+                    end
+                  }
 
-    # Load user defined paperclip settings
-    include Spree::Core::S3Support
-    supports_s3 :attachment
-    
-    Spree::BannerBox.attachment_definitions[:attachment][:styles] = ActiveSupport::JSON.decode(Spree::Config[:banner_styles])
-    Spree::BannerBox.attachment_definitions[:attachment][:path] = Spree::Config[:banner_path]
-    Spree::BannerBox.attachment_definitions[:attachment][:url] = Spree::Config[:banner_url]
-    Spree::BannerBox.attachment_definitions[:attachment][:default_url] = Spree::Config[:banner_default_url]
-    Spree::BannerBox.attachment_definitions[:attachment][:default_style] = Spree::Config[:banner_default_style]
-    
     # for adding banner_boxes which are closely related to existing ones
     # define "duplicate_extra" for site-specific actions, eg for additional fields
     def duplicate
@@ -54,20 +48,16 @@ module Spree
       filename = temporary.path unless temporary.nil?
       filename = attachment.path if filename.blank?
       geometry = Paperclip::Geometry.from_file(filename)
-      self.attachment_width = geometry.width
+      self.attachment_width  = geometry.width
       self.attachment_height = geometry.height
     end
 
     def enhance_settings
-      extended_hash = {}
-      ActiveSupport::JSON.decode(SpreeBanner::Config[:banner_styles]).each do |key,value|
-        extended_hash[:"#{key}"] = value
-      end
-      Spree::BannerBox.attachment_definitions[:attachment][:styles] = extended_hash
+      Spree::BannerBox.attachment_definitions[:attachment][:styles] = SpreeBanner::Config[:banner_styles].symbolize_keys!
       Spree::BannerBox.attachment_definitions[:attachment][:path] = SpreeBanner::Config[:banner_path]
       Spree::BannerBox.attachment_definitions[:attachment][:url] = SpreeBanner::Config[:banner_url]
       Spree::BannerBox.attachment_definitions[:attachment][:default_url] = SpreeBanner::Config[:banner_default_url]
-      Spree::BannerBox.attachment_definitions[:attachment][:default_style] = SpreeBanner::Config[:banner_default_style]
+      Spree::BannerBox.attachment_definitions[:attachment][:default_style] = SpreeBanner::Config[:banner_default_style].to_sym
     end
 
     def self.categories_for_select

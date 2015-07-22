@@ -1,9 +1,17 @@
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @banner_box } %>
-
-<%= form_for [:admin, @banner_box], :html => { :multipart => true } do |f| %>
-  <fieldset data-hook="new_banner_box">
-    <legend align="center"><%= t(:new_banner_box) %></legend>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
-  </fieldset>
+<% content_for :page_title do %>
+    <%= Spree.t(:new_banner_box) %>
 <% end %>
+
+<div data-hook="admin_banner_box_new_form_header">
+  <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @banner_box } %>
+</div>
+
+<div data-hook="admin_banner_box_new_form">
+  <%= form_for [:admin, @banner_box], url: spree.admin_banner_boxes_url, method: :post, :html => { :multipart => true }  do |f| %>
+      <%= render :partial => 'form', :locals => { :f => f } %>
+
+      <div data-hook="admin_banner_box_new_form_buttons">
+        <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+      </div>
+  <% end %>
+</div>

@@ -1,25 +1,9 @@
 en:
-  images_only: "deve essere JPG, JPEG, PNG o GIF"
-  banner_box_settings: "Banner Settings"
-  add_new_banner_style: "Add New Banner Style"
-  banner_box_settings_warning: "You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails CLASS=Spree::Banner to do this."
-  banner_settings_description: "Banner Settings Description"
+  banners: Banners
+  images_only: "only available is JPG, JPEG, PNG o GIF"
   banner_settings_updated: "Banner Settings successfully updated."
-  banner_default_style: "Banner Default Style"
-  banner_default_url: "Banner Default URL"
-  banner_path: "Banner Path"
-  banner_styles: "Paperclip Styles Banner"
-  banner_url: "Banner URL"
-  back_to_banner_boxes_list: "Back To Banner List"
-  new_banner_box: "New Banner"
-  listing_banner_boxes: "Listing Banners"
-  enabled: Enabled?
-  url: Link url
-  attachment: Attachment
-  category: Category
   banner_boxes: Banners
   banner_box: Banner
-  show_only_enabled: "Show only enabled"
   notice_messages:
     banner_box_cloned: "Banner has been cloned"
     banner_box_not_cloned: "Banner could not be cloned"
@@ -34,3 +18,31 @@ en:
         updated_at: Updated At
         created_at: Created At
         enabled: Enabled?
+        begin_display: Begin Display
+        end_display: End Display
+  destroy: Destroy
+  confirm: Confirm
+  spree:
+    banners: Banners
+    banner_box_settings: Banner Settings
+    general_settings: General Settings
+    banner_styles: Paperclip Styles Banner
+    banner_path: Banner Path
+    banner_default_url: Banner Default URL
+    banner_url: Banner URL
+    banner_default_style: Banner Default Style
+    add_new_banner_style: Add New Banner Style
+    new_banner_style_name: Style Name
+    new_banner_style_value: Value
+    banner_settings_updated: Banner Settings successfully updated
+    listing_banner_boxes: Listing Banners
+    new_banner_box: New Banner Box
+    attachment: Attachment
+    enabled: Enabled
+    show_only_enabled: Show Only Enabled
+    url: URL
+    begin_display: Begin Display
+    end_display: End Display
+    previous: Previous
+    next: Next
+    banner_box_settings_warning: You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails CLASS=Spree::BannerBox to do this.
