@@ -33,16 +33,21 @@ module Spree
       end
       
       def location_after_save
-         edit_admin_banner_box_url(@banner_box)
+         admin_banner_boxes_url
       end
       
       def collection
         return @collection if @collection.present?
         params[:q] ||= {}
-        params[:q][:s] ||= "category, position asc"
-        
-        @search = super.ransack(params[:q])
-        @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_products_per_page])
+
+        params[:q][:s] ||= 'category, position asc'
+        @collection = super
+
+        @q = @collection.ransack(params[:q])
+        @collection = @q.result.
+            page(params[:page]).
+            per(params[:per_page] || Spree::Config[:admin_products_per_page])
+        @collection
       end
     end
   end

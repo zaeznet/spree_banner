@@ -1,7 +1,7 @@
 Spree Banner
 ============
 
-Adds a way to manage banners to Spree Commerce [compatible with Amazon S3]
+Adds a way to manage banners to Spree Commerce.
 
 
 Installation
@@ -10,7 +10,7 @@ Installation
 1. Add the following to your Gemfile
 
 ```ruby
-gem 'spree_banner', '~> 2.0.0'
+gem 'spree_banner', github: 'zaeznet/spree_banner'
 ```
 
 2. Run `bundle install`
@@ -25,12 +25,12 @@ rails g spree_banner:install
 Configuration
 -------------
 
-Preferences can be updated within the admin panel under "Configuration" then "Banner box settings".
+Preferences can be updated within the admin panel "Banner box settings".
 Or you may set them with an initializer within your application:
 
 ```ruby
 SpreeBanner::Config.tap do |config|
-  config.banner_styles = {"mini" => "48x48>", "small" => "100x100>", "large" => "800x200#"}.to_json.to_s
+  config.banner_styles = {mini: "48x48>", small: "100x100>", large: "800x200#"}
   config.banner_default_style = 'small'
 end
 ```
@@ -48,9 +48,13 @@ Banner use example
 2. Additional options:
 
 ```ruby
-  :class => "my_class"
-  :style => "my_style"
-  :list = true|false
+  class: 'my_class'
+  style: 'my_style'
+  carousel_id: 'carousel'
+  buttons_carousel: true|false
+  buttons_class: 'my_buttons_class'
+  indicators_carousel: true|false
+  image_class: 'my_image_class'
 ```
 
 Copyright (c) 2012 [Damiano Giacomello], released under the New BSD License
